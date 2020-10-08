@@ -7,7 +7,7 @@ class NavBar extends React.Component{
     render(){
         return (
             <HashRouter>
-                <nav className="navbar navbar-expand-sm navbar-dark bg-primary">
+                <nav className="navbar navbar-expand-sm navbar-dark bg-primary" style={{width:'100%'}}>
                 <a className="navbar-brand">ZooPilot</a>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>

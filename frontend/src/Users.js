@@ -21,18 +21,49 @@ class Users extends Component {
         })
     }
 
+    AddUser(){
+        alert('success')
+    }
 
     render() {
-        const users = this.state.users.map(u => <li key={u.id}>name: {u.name}, email: {u.email}</li>)
+        const users = this.state.users.map(u => 
+            <tr key={u.id}>
+                <td scope="row">{u.name}</td>
+                <td>{u.email}</td>
+            </tr>
+        );
         return (
-          <div>
-            <h2 style={{color: 'white'}}>Users</h2>
-            <p>Mauris sem velit, vehicula eget sodales vitae,
-            rhoncus eget sapien:</p>
-            <ul>
-                {users}
-            </ul>
-          </div>
+            <div className="row">
+                <div className="col-lg-7 mx-auto">
+                    <div className="card border-0 shadow">
+                        <div className="card-body p-5">
+                            {/* Responsive table */}
+                            <div className="table-responsive">
+                                <table className="table m-0">
+                                    <thead>
+                                        <button 
+                                            onClick={this.AddUser} 
+                                            id="AddIncomeBtn" 
+                                            type="button" 
+                                            className="btn btn-success" 
+                                            style={{float:'right', marginBottom:15}}>
+                                            Add User
+                                        </button>
+                                        <h3 style={{color:'black;', marginBottom:15, textAlign:'center'}}>Users</h3>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

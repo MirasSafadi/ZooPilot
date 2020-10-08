@@ -28,21 +28,13 @@ class App extends Component {
       })
   }
 
-  ConnectToDB(){
-    axios.get('http://localhost:8000/api/connectToDB')
-        .then(console.log('Connected to DB!'))
-  }
-
 
 
   render() {
     return (
       <HashRouter>
         <NavBar />
-        <div className="App">
-          <h1 style={{color: "white"}}>{this.state.response_text}</h1>
-          <button className="btn btn-success" onClick={this.ConnectToDB}>Connect to DB</button>
-        </div>
+        <br/>
         <div className="content">
           <Route exact path="/" component={Home}/>
           <Route path="/Users" component={Users}/>
