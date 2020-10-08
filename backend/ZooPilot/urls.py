@@ -4,6 +4,7 @@ from ZooPilot import views as v
 
 app_name = 'backend'
 urlpatterns = [
-    path('api/home/', v.home, name='home'),
+    path('api/index/', v.index, name='index'),
     path('api/connectToDB/',v.ConnectToDB,name='connectToDB'),
+    path('api/getUsers/',v.getUsers,name='getUsers'),
 ]

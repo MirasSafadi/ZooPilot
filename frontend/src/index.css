@@ -7,8 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-image: url(./BG.jpg);
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+.active{
+  background-color: #00aeff;
 }
