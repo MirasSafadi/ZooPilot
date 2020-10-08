@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'ZooPilot',
+    'utils',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,6 @@ CORS_ORIGIN_WHITELIST = (
      'http://localhost:3000',
      'http://localhost:8000'
  )
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
+

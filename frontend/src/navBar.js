@@ -6,20 +6,20 @@ class NavBar extends React.Component{
 
     render(){
         return (
-            <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
-            <a class="navbar-brand">ZooPilot</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <nav className="navbar navbar-expand-sm navbar-dark bg-primary">
+            <a className="navbar-brand">ZooPilot</a>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                <a class="nav-item nav-link active" >Home</a>
-                <a class="nav-item nav-link active" >Users</a>
-                <a class="nav-item nav-link active" >Sessions</a>
-                <a class="nav-item nav-link active" >Recordings</a>
+            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div className="navbar-nav">
+                <a className="nav-item nav-link active" >Home</a>
+                <a className="nav-item nav-link active" >Users</a>
+                <a className="nav-item nav-link active" >Sessions</a>
+                <a className="nav-item nav-link active" >Recordings</a>
                 </div>
             </div>
-            <p style={{color: "white"}}>Welcome, Admin</p>
+            <a className="nav-item nav-link active" style={{color:'white'}}>Welcome, Admin</a>
             </nav>
         )}
 }
