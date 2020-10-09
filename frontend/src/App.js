@@ -1,12 +1,12 @@
 import React,{ Component } from 'react';
-import {Route,NavLink,HashRouter} from 'react-router-dom';
+import {Route,HashRouter} from 'react-router-dom';
 import './App.css';
-import NavBar from './navBar';
+import NavBar from './components/navBar';
 import axios from 'axios';
-import Home from './Home';
-import Users from './Users';
-import Sessions from './Sessions';
-import Recordings from './Recordings';
+import Home from './content/Home';
+import Users from './content/Users';
+import Sessions from './content/Sessions';
+import Recordings from './content/Recordings';
 
 
 

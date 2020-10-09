@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/index/', v.index, name='index'),
     path('api/connectToDB/',v.ConnectToDB,name='connectToDB'),
     path('api/getUsers/',v.getUsers,name='getUsers'),
+    # path('api/addUser/<string:name>/<string:email>/<string:password>',v.addUser,name='addUser'),
 ]

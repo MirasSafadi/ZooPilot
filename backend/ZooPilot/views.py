@@ -26,9 +26,15 @@ def getUsers(request):
             user = {
                 'id': str(doc['_id']),
                 'name': doc['name'],
-                'email': doc['email']
+                'email': doc['email'],
+                'password': doc['password']
             }
             users.append(user)
     # return HttpResponse(200)
     return JsonResponse({'users':users})
-    
+
+
+# def addUser(request,name,email,user):
+#     print(name)
+#     print(email)
+#     print(password)

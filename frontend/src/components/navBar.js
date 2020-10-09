@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Route,NavLink,HashRouter} from 'react-router-dom';
+import {NavLink,HashRouter} from 'react-router-dom';
 
 class NavBar extends React.Component{
 
