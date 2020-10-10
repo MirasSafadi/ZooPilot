@@ -22,13 +22,7 @@ class App extends Component {
     }
   }
   componentDidMount(){
-    axios.get('http://localhost:8000/api/index')
-      .then(res => {
-        const res_text = res.data.response_text
-        this.setState({
-          response_text: res_text
-        });
-      })
+    
   }
 
 

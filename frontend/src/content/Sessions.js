@@ -29,7 +29,8 @@ class Sessions extends Component {
   }
   showTableHandler(event){
     event.preventDefault();
-    let email = this.state.email;
+    var email = this.state.email;
+
     //fetch sessions from database and save it in state.sessions
     axios.get('http://localhost:8000/api/getSessions/' + email)
     .then(res => {
@@ -40,10 +41,9 @@ class Sessions extends Component {
         owner: owner,
         showTable: true,
       });
-    }).catch(err => {
-      alert(err.message)
-    })
-    
+    }).catch((error) => {
+      alert(error);
+    });
   }
   viewParticipantsHandler(session){
 
@@ -71,22 +71,26 @@ class Sessions extends Component {
   }
 
   render() {
-    const sessions = this.state.sessions.map(s => 
-      <tr key={s.id}>
-        {/* add table data according to session object attributes */}
-        <td>{s.date}</td>
-        <td>{s.recording_enabled}</td>
-        <td>{s.number_of_participants}</td>
-        <td>
-            {/* Call to action buttons */}
-            <ul className="list-inline m-0">
-                <li className="list-inline-item">
-                    <button onClick={() => this.viewParticipantsHandler(s)} className="btn btn-secondary btn-sm rounded-2" type="button" >View Participants</button>
-                </li>
-            </ul>
-        </td>
-      </tr>
-    );
+    let sessions = [];
+    if(Array.isArray(this.state.sessions) && this.state.sessions.length){
+      
+      sessions = this.state.sessions.map(s => 
+        <tr key={s.id}>
+          {/* add table data according to session object attributes */}
+          <td>{s.date}</td>
+          <td>{s.recording_enabled}</td>
+          <td>{s.number_of_participants}</td>
+          <td>
+              {/* Call to action buttons */}
+              <ul className="list-inline m-0">
+                  <li className="list-inline-item">
+                      <button onClick={() => this.viewParticipantsHandler(s)} className="btn btn-secondary btn-sm rounded-2" type="button" >View Participants</button>
+                  </li>
+              </ul>
+          </td>
+        </tr>
+      );
+    }
     const card = (
       <Card title="View a users' sessions">
         <form onSubmit={this.showTableHandler} >
@@ -108,10 +112,9 @@ class Sessions extends Component {
       </button>
     );
     const table = (
-      //save the current user in state and put name in table title
+      
       <Table title={this.state.owner+'\'s sessions'} contentArray={sessions} button={button} refreshHandler={this.refreshList}>
         <tr>
-          {/* change according to session object attributes */}
           <th scope="col">Session Date</th>
           <th scope="col">Recording Enabled?</th>
           <th scope="col">No. of Participants</th>

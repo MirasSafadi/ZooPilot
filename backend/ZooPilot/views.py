@@ -12,13 +12,6 @@ import datetime
 
 
 # Create your views here.
-def index(request):
-    return JsonResponse({'response_text':'Hello React World!'})
-
-def ConnectToDB(request):
-    if request.method == 'GET':
-        print('hello')
-    return HttpResponse(200)
 
 @api_view(['GET'])
 def getUsers(request):
@@ -55,14 +48,14 @@ def addUser(request):
         users_collection = get_collecetion('ZooPilot','Users')
         record_id = users_collection.insert_one(user)
         print(record_id, type(record_id))
-    return HttpResponse(200)
+    return HttpResponse(status=200)
 
 @csrf_exempt
 def deleteUser(request,email):
     if request.method == 'DELETE':
         users_collection = get_collecetion('ZooPilot','Users')
         record_id = users_collection.delete_one({'email':email})
-    return HttpResponse(200)
+    return HttpResponse(status=200)
 
 @csrf_exempt
 def updateUser(request,email):
@@ -77,18 +70,19 @@ def updateUser(request,email):
         pprint(updated_user)
         users_collection = get_collecetion('ZooPilot','Users')
         record_id = users_collection.update_one({'email':email},{'$set':updated_user})
-    return HttpResponse(200)
+    return HttpResponse(status=200)
 
 @api_view(['GET'])
 @csrf_exempt
 def getSessions(request,email):
     if request.method == 'GET':
-        owner = get_collecetion('ZooPilot','Users').find({'email':email},{'name':1}).count()
-        if(owner > 0 ):
-            name = "Jack"
+        count = get_collecetion('ZooPilot','Users').find({'email':email},{'name':1}).count()
+        if(count == 1):
+            name = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})['name']
             col = get_collecetion('ZooPilot','Sessions')
             cursor = col.find({'owner':email})
-
+            if cursor.count() == 0:
+                return HttpResponse('User has no sessions', status=400)
             sessions = []
             for doc in cursor:
                 pprint(doc)
@@ -103,6 +97,6 @@ def getSessions(request,email):
                 }
                 sessions.append(session)
             return JsonResponse({'sessions':sessions,'owner_name':name})
-        return HttpResponse('User has no sessions')
+        return HttpResponse('User does not exist',status=400)
     # return HttpResponse(203)
     
