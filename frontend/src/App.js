@@ -8,6 +8,9 @@ import Users from './content/Users';
 import Sessions from './content/Sessions';
 import Recordings from './content/Recordings';
 
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+axios.defaults.xsrfCookieName = "csrftoken"
+
 
 
 

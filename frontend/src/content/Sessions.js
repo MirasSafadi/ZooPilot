@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios';
 import Card from '../components/Card';
 import Table from '../components/Table';
  
@@ -8,12 +9,14 @@ class Sessions extends Component {
     this.state={
       showTable: false,
       sessions: [],
-      email: ''
+      email: '',
+      owner:''
     }
     this.changeHandler = this.changeHandler.bind(this);
     this.showTableHandler = this.showTableHandler.bind(this);
     this.viewParticipantsHandler = this.viewParticipantsHandler.bind(this);
     this.changeUser = this.changeUser.bind(this);
+    this.refreshList = this.refreshList.bind(this);
   }
 
   changeHandler(event){
@@ -26,19 +29,44 @@ class Sessions extends Component {
   }
   showTableHandler(event){
     event.preventDefault();
-    console.log(this.state.email);
+    let email = this.state.email;
     //fetch sessions from database and save it in state.sessions
-    this.setState({
-      showTable: true,
-      email: ''
-    });
+    axios.get('http://localhost:8000/api/getSessions/' + email)
+    .then(res => {
+      const res_sessions = res.data.sessions;
+      const owner = res.data.owner_name;
+      this.setState({
+        sessions: res_sessions,
+        owner: owner,
+        showTable: true,
+      });
+    }).catch(err => {
+      alert(err.message)
+    })
+    
   }
   viewParticipantsHandler(session){
 
   }
   changeUser(){
     this.setState({
-      showTable: false
+      showTable: false,
+      sessions:[],
+      email: '',
+      owner:''
+    })
+  }
+  refreshList(){
+    let email = this.state.email;
+    if(email === '') return;
+    axios.get('http://localhost:8000/api/getSessions/' + email)
+    .then(res => {
+      const res_sessions = res.data.sessions;
+      this.setState({
+        sessions: res_sessions
+      });
+    }).catch(err => {
+      alert(err.message)
     })
   }
 
@@ -46,6 +74,17 @@ class Sessions extends Component {
     const sessions = this.state.sessions.map(s => 
       <tr key={s.id}>
         {/* add table data according to session object attributes */}
+        <td>{s.date}</td>
+        <td>{s.recording_enabled}</td>
+        <td>{s.number_of_participants}</td>
+        <td>
+            {/* Call to action buttons */}
+            <ul className="list-inline m-0">
+                <li className="list-inline-item">
+                    <button onClick={() => this.viewParticipantsHandler(s)} className="btn btn-secondary btn-sm rounded-2" type="button" >View Participants</button>
+                </li>
+            </ul>
+        </td>
       </tr>
     );
     const card = (
@@ -63,17 +102,18 @@ class Sessions extends Component {
       <button 
           onClick={this.changeUser}
           type="button" 
-          className="btn btn-success" 
+          className="btn btn-danger" 
           style={{float:'right', marginBottom:15}}>
           Change User
       </button>
     );
     const table = (
       //save the current user in state and put name in table title
-      <Table title="users' sessions" contentArray={sessions} button={button}>
+      <Table title={this.state.owner+'\'s sessions'} contentArray={sessions} button={button} refreshHandler={this.refreshList}>
         <tr>
           {/* change according to session object attributes */}
           <th scope="col">Session Date</th>
+          <th scope="col">Recording Enabled?</th>
           <th scope="col">No. of Participants</th>
           <th scope="col"></th>
         </tr>

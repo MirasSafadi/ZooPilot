@@ -1,12 +1,13 @@
 import React from "react";
 
-const Table = ({ theadItems, title, contentArray, button }) => {
+const Table = ({ theadItems, title, contentArray, button, refreshHandler }) => {
     
     return (
         <div className="row">
             <div className="col-lg-7 mx-auto">
                 <div className="card border-0 shadow">
                     <div className="card-body p-5">
+                        <button onClick={refreshHandler} type="button" className="btn btn-secondary" style={{float:'right', marginLeft:5}}>Refresh</button>
                         {button}
                         {/* Responsive table */}
                         <h3 style={{color:'black', marginBottom:15, float:'left'}}>{title}</h3>

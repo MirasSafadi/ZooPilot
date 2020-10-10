@@ -130,6 +130,11 @@ CORS_ORIGIN_WHITELIST = (
      'http://localhost:8000',
      'http://localhost:8080'
  )
+
+
+
+
+
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 MONGO_CONNECTION_STRING = "mongodb://ZooPilot-Website:130795mrS@cluster0-shard-00-00.khhj6.mongodb.net:27017,cluster0-shard-00-01.khhj6.mongodb.net:27017,cluster0-shard-00-02.khhj6.mongodb.net:27017/ZooPilot?ssl=true&replicaSet=atlas-xyt2lj-shard-0&authSource=admin&retryWrites=true&w=majority"
