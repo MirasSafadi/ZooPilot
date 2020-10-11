@@ -1,6 +1,6 @@
 import React from "react";
 
-const Table = ({ children, title, contentArray, button, refreshHandler }) => {
+const Table = ({ children, title, contentArray, button, refreshHandler, actionButton }) => {
     
     return (
         <div className="row">
@@ -9,6 +9,7 @@ const Table = ({ children, title, contentArray, button, refreshHandler }) => {
                     <div className="card-body p-5">
                         <button onClick={refreshHandler} type="button" className="btn btn-secondary" style={{float:'right', marginLeft:5}}>Refresh</button>
                         {button}
+                        {actionButton}
                         {/* Responsive table */}
                         <h3 style={{color:'black', marginBottom:15, float:'left'}}>{title}</h3>
                         <div className="table-responsive">

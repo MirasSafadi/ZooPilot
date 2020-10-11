@@ -14,6 +14,7 @@ class Users extends Component {
             showUpdateModal: false,
             name:'',
             email:'',
+            id:'',
             password1:'',
             password2:''
         }
@@ -49,6 +50,7 @@ class Users extends Component {
     }
     showUpdateModal(user){
         this.setState({
+            id: user.id,
             name: user.name,
             email: user.email,
             showUpdateModal: true
@@ -65,6 +67,10 @@ class Users extends Component {
         let email = this.state.email;
         let password1 = this.state.password1;
         let password2 = this.state.password2;
+        if(name === '' || email === '' || password1 === '' || password2 === ''){
+            alert('invalid data');
+            return;
+        }
         if(password1 !== password2){
             alert('Passwords don\'t match');
             return;
@@ -78,6 +84,7 @@ class Users extends Component {
         //post request to backend
         axios.post('http://localhost:8000/api/addUser/',user)
         .then(res =>{
+            this.refreshList();
             alert('success')
         }).catch(err =>{
             alert('Failure: '+ err.message)
@@ -89,14 +96,16 @@ class Users extends Component {
         event.preventDefault();
         let name = this.state.name;
         let email = this.state.email;
+        let id = this.state.id;
         var user = {
             name: name,
             email: email
         };
-        axios.put('http://localhost:8000/api/updateUser/'+email,user)
+        axios.put('http://localhost:8000/api/updateUser/'+id,user)
         .then(res => {
             //update the list
             this.refreshList();
+            alert('success')
         }).catch(err => {
             alert('Failure: '+ err.message)
         })
@@ -113,16 +122,11 @@ class Users extends Component {
 
 
     DeleteUser(user){
-        axios.delete('http://localhost:8000/api/deleteUser/'+user.email)
+        axios.delete('http://localhost:8000/api/deleteUser/'+user.id)
         .then(res => {
             //update the list
-            axios.get('http://localhost:8000/api/getUsers')
-            .then(res => {
-                const res_users = res.data.users
-                this.setState({
-                    users: res_users
-                });
-            })
+            this.refreshList();
+            alert('success');
         }).catch(err => {
             alert(err.message);
         })
@@ -132,6 +136,7 @@ class Users extends Component {
         this.setState({
             showModal: false,
             showUpdateModal:false,
+            id:'',
             name:'',
             email:'',
             password1:'',

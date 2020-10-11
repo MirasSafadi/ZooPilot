@@ -2,12 +2,14 @@ import React, { Component } from "react";
 import axios from 'axios';
 import Card from '../components/Card';
 import Table from '../components/Table';
+import Modal from '../components/Modal';
  
 class Sessions extends Component {
   constructor(props){
     super(props)
     this.state={
       showTable: false,
+      showParticipantsModal: false,
       sessions: [],
       email: '',
       owner:''
@@ -17,6 +19,9 @@ class Sessions extends Component {
     this.viewParticipantsHandler = this.viewParticipantsHandler.bind(this);
     this.changeUser = this.changeUser.bind(this);
     this.refreshList = this.refreshList.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    
+    this.participants = [];
   }
 
   changeHandler(event){
@@ -45,9 +50,26 @@ class Sessions extends Component {
       alert(error);
     });
   }
-  viewParticipantsHandler(session){
 
+
+  viewParticipantsHandler(session){
+    axios.get('http://localhost:8000/api/viewParticipants/'+session.id)
+    .then(response => {
+        let res_participants = response.data.participants;
+        this.participants = res_participants.map(p => 
+            <tr key={p.id}>
+              <td>{p.name}</td>
+              <td>{p.email}</td>
+            </tr>
+        );
+        this.setState({
+              showParticipantsModal: true
+        })
+    })
+    
   }
+
+
   changeUser(){
     this.setState({
       showTable: false,
@@ -69,6 +91,14 @@ class Sessions extends Component {
       alert(err.message)
     })
   }
+  closeModal(){
+    this.setState({
+      showParticipantsModal: false
+    })
+  }
+  refreshParticipantsList(){
+    console.log('refreshed!')
+  }
 
   render() {
     let sessions = [];
@@ -80,14 +110,17 @@ class Sessions extends Component {
           <td>{s.date}</td>
           <td>{s.recording_enabled}</td>
           <td>{s.number_of_participants}</td>
-          <td>
-              {/* Call to action buttons */}
-              <ul className="list-inline m-0">
-                  <li className="list-inline-item">
-                      <button onClick={() => this.viewParticipantsHandler(s)} className="btn btn-secondary btn-sm rounded-2" type="button" >View Participants</button>
-                  </li>
-              </ul>
-          </td>
+          {s.number_of_participants>0 && 
+              <td>
+                  {/* Call to action buttons */}
+                  <ul className="list-inline m-0">
+                      <li className="list-inline-item">
+                          <button onClick={() => this.viewParticipantsHandler(s)} className="btn btn-secondary btn-sm rounded-2" type="button" >View Participants</button>
+                      </li>
+                  </ul>
+              </td>
+          }
+          
         </tr>
       );
     }
@@ -124,6 +157,30 @@ class Sessions extends Component {
     );
     return (
       <main>
+        <Modal show={this.state.showParticipantsModal} handleClose={this.closeModal} title="Participants in this session">
+            <button onClick={this.refreshParticipantsList} type="button" className="btn btn-secondary btn-sm btn-block" style={{float:'right', marginBottom:5}}>Refresh</button>
+            {/* Responsive table */}
+            <div className="table-responsive">
+                <table className="table m-1">   
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {this.participants}
+                    </tbody>
+                </table>
+            </div>
+
+          {/* <Table contentArray={this.participants} refreshHandler={this.refreshParticipantsList}>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+            </tr>
+          </Table> */}
+        </Modal>
         {!this.state.showTable? card: table}
       </main>
     );
