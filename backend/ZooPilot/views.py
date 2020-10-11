@@ -45,48 +45,36 @@ def addUser(request):
             'email': email,
             'password': hashed_password 
         }
-        users_collection = get_collecetion('ZooPilot','Users')
-        users_collection.insert_one(user)
+        get_collecetion('ZooPilot','Users').insert_one(user)
     return HttpResponse(status=200)
 
 @csrf_exempt
 def deleteUser(request,id):
     if request.method == 'DELETE':
-        users_collection = get_collecetion('ZooPilot','Users')
-        record_id = users_collection.delete_one({'_id':ObjectId(id)})
+        get_collecetion('ZooPilot','Users').delete_one({'_id':ObjectId(id)})
     return HttpResponse(status=200)
 
 @csrf_exempt
 def updateUser(request,id):
     if request.method == 'PUT':
-        old_email = name = get_collecetion('ZooPilot','Users').find_one({'_id':ObjectId(id)},{'email':1})['email']
+        old_email = get_collecetion('ZooPilot','Users').find_one({'_id':ObjectId(id)},{'email':1})['email']
         data = json.loads(request.body)
         updated_user = {
             'name': data['name'],
             'email': data['email']
         }
-        
-        #update in Users collection
-        users_collection = get_collecetion('ZooPilot','Users')
-        users_collection.update_one({'_id':ObjectId(id)},{'$set':updated_user})
-        #update in Sessions collection
-        sessions_collection = get_collecetion('ZooPilot','Sessions')
-        sessions_collection.update_many({'owner':old_email},{'$set':{'owner':updated_user['email']}})
-        #update in Recordings collection
-        recordings_collection = get_collecetion('ZooPilot','Recordings')
-        recordings_collection.update_many({'author':old_email},{'$set':{'author':updated_user['email']}})
-        
+        get_collecetion('ZooPilot','Users').update_one({'_id':ObjectId(id)},{'$set':updated_user})
     return HttpResponse(status=200)
 
 @api_view(['GET'])
 @csrf_exempt
 def getSessions(request,email):
     if request.method == 'GET':
-        count = get_collecetion('ZooPilot','Users').find({'email':email},{'name':1}).count()
-        if(count == 1):
-            name = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})['name']
-            col = get_collecetion('ZooPilot','Sessions')
-            cursor = col.find({'owner':email})
+        owner = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})
+        if(owner != None):
+            name = owner['name']
+            ownerID = owner['_id']
+            cursor = get_collecetion('ZooPilot','Sessions').find({'owner':ownerID})
             sessions = []
             for doc in cursor:
                 number_of_participants = get_collecetion('ZooPilot','participants_in_session').find({'sessionID':doc['_id']}).count()
@@ -106,17 +94,15 @@ def getSessions(request,email):
 @csrf_exempt
 def getRecordings(request,email):
     if request.method == 'GET':
-        count = get_collecetion('ZooPilot','Users').find({'email':email},{'name':1}).count()
-        if(count == 1):
-            author = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1,'can_record':1})
-
-            col = get_collecetion('ZooPilot','Recordings')
-            cursor = col.find({'author':email})
+        author = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1,'can_record':1})
+        if(author != None):
+            authorID = author['_id']
+            cursor = get_collecetion('ZooPilot','Recordings').find({'author':authorID})
             recordings = []
             for doc in cursor:
                 sessionID = doc['sessionID'] #object of type ObjectID
                 session = get_collecetion('ZooPilot','Sessions').find_one({'_id':sessionID},{'owner':1,'date':1})
-                owner_name = get_collecetion('ZooPilot','Users').find_one({'email':session['owner']})['name']
+                owner_name = get_collecetion('ZooPilot','Users').find_one({'_id':session['owner']})['name']
                 length = doc['length']
 
                 recording = {

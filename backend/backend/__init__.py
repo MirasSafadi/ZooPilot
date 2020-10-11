@@ -7,7 +7,7 @@ from pymongo import MongoClient
 #for cloud connection - MongoDB Atlas
 MONGO_CLIENT = MongoClient(settings.MONGO_CONNECTION_STRING)
 
-#can write script to populate the database upon server startup here:
+#can write script to maintain the database upon server startup here:
 #Below is an examlpe of populating the participant_in_session collection
 
 # import random
@@ -31,12 +31,14 @@ MONGO_CLIENT = MongoClient(settings.MONGO_CONNECTION_STRING)
 
 
 
+
 # sessions = []
-# users = []
 # cursor = MONGO_CLIENT.ZooPilot.Sessions.find()
 # for doc in cursor:
 #     sessions.append(doc)
 
+
+# users = []
 # cursor = MONGO_CLIENT.ZooPilot.Users.find()
 # for doc in cursor:
 #     users.append(doc)
