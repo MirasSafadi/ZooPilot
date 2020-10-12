@@ -10,7 +10,7 @@ MONGO_CLIENT = MongoClient(settings.MONGO_CONNECTION_STRING)
 #can write script to maintain the database upon server startup here:
 #Below is an examlpe of populating the participant_in_session collection
 
-import random
+# import random
 
 
 # def random_date():
