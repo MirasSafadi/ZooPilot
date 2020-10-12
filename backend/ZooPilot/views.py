@@ -13,9 +13,9 @@ from bson.objectid import ObjectId
 
 
 # Create your views here.
-
-@api_view(['GET'])
-def getUsers(request):
+@api_view(['GET','POST'])
+@csrf_exempt #FOR TESTING ONLY
+def users(request):
     if request.method == 'GET':
         col = get_collecetion('ZooPilot','Users')
         cursor = col.find()
@@ -27,12 +27,7 @@ def getUsers(request):
                 'email': doc['email']
             }
             users.append(user)
-    # return HttpResponse(200)
-    return JsonResponse({'users':users})
-
-@api_view(['POST'])
-@csrf_exempt #FOR TESTING ONLY
-def addUser(request):
+        return JsonResponse({'users':users})
     if request.method == 'POST':
         data = request.data
         name = data['name']
@@ -46,16 +41,21 @@ def addUser(request):
             'password': hashed_password 
         }
         get_collecetion('ZooPilot','Users').insert_one(user)
-    return HttpResponse(status=200)
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
-@csrf_exempt
-def deleteUser(request,id):
+
+@api_view(['PUT','DELETE'])
+@csrf_exempt #FOR TESTING ONLY
+def users_update(request,id):
     if request.method == 'DELETE':
-        get_collecetion('ZooPilot','Users').delete_one({'_id':ObjectId(id)})
-    return HttpResponse(status=200)
-
-@csrf_exempt
-def updateUser(request,id):
+        _id = ObjectId(id)
+        get_collecetion('ZooPilot','Users').delete_one({'_id':_id})
+        #on delete cascade
+        get_collecetion('ZooPilot','Sessions').delete_one({'owner':_id})
+        get_collecetion('ZooPilot','Recordings').delete_one({'author':_id})
+        get_collecetion('ZooPilot','participants_in_session').delete_one({'userID':_id})
+        return HttpResponse(status=200)
     if request.method == 'PUT':
         old_email = get_collecetion('ZooPilot','Users').find_one({'_id':ObjectId(id)},{'email':1})['email']
         data = json.loads(request.body)
@@ -64,11 +64,12 @@ def updateUser(request,id):
             'email': data['email']
         }
         get_collecetion('ZooPilot','Users').update_one({'_id':ObjectId(id)},{'$set':updated_user})
-    return HttpResponse(status=200)
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
 @api_view(['GET'])
-@csrf_exempt
-def getSessions(request,email):
+@csrf_exempt #FOR TESTING ONLY
+def sessions(request,email):
     if request.method == 'GET':
         owner = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})
         if(owner != None):
@@ -90,10 +91,10 @@ def getSessions(request,email):
             return JsonResponse({'sessions':sessions,'owner_name':name})
         return HttpResponse('User does not exist',content_type='text/plain',status=400)
 
-@api_view(['GET'])
-@csrf_exempt
-def getRecordings(request,email):
-    if request.method == 'GET':
+@api_view(['GET','PUT'])
+@csrf_exempt #FOR TESTING ONLY
+def recordings(request,email):
+    if request.method == 'GET': #get recordings of a user
         author = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1,'can_record':1})
         if(author != None):
             authorID = author['_id']
@@ -113,19 +114,18 @@ def getRecordings(request,email):
                 }
                 recordings.append(recording)
             return JsonResponse({'recordings':recordings,'name':author['name'],'can_record':author['can_record']})
-        return HttpResponse('User does not exist',content_type='text/plain',status=400)
+        return HttpResponse('User does not exist',content_type='text/plain',status=404)
 
-@csrf_exempt
-@api_view(['PUT'])
-def switchRecord(request,email):
-    if request.method == 'PUT':
+    if request.method == 'PUT': #block/unblock a user from recording
         oldVal = get_collecetion('ZooPilot','Users').find_one({'email':email},{'can_record':1})['can_record']
         get_collecetion('ZooPilot','Users').update_one({'email':email},{'$set':{'can_record': not oldVal}})
         return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
-@csrf_exempt
+
 @api_view(['GET'])
-def viewParticipants(request,id):
+@csrf_exempt#FOR TESTING ONLY
+def participants(request,id):
     if request.method == 'GET':
         cursor = get_collecetion('ZooPilot','participants_in_session').find({'sessionID':ObjectId(id)},{'userID':1})
         participants = []

@@ -30,7 +30,7 @@ class Recordings extends Component {
   showTableHandler(event){
     event.preventDefault();
     let email = this.state.email
-    axios.get('http://localhost:8000/api/getRecordings/' + email)
+    axios.get('http://localhost:8000/api/recordings/' + email)
     .then(response => {
       const recordings = response.data.recordings;
       const name = response.data.name;
@@ -57,7 +57,7 @@ class Recordings extends Component {
     let  record_ability = !this.state.can_record;
     let email = this.state.email;
     //update in db api/switchRecord/
-    axios.put('http://localhost:8000/api/switchRecord/' + email)
+    axios.put('http://localhost:8000/api/recordings/' + email)
     .then(response => {
       this.setState({
         can_record: record_ability
@@ -86,9 +86,9 @@ class Recordings extends Component {
         <form onSubmit={this.showTableHandler} >
 
           <label className="form-label" aria-label="name">Email: </label>
-          <input onChange={this.changeHandler} name="email" className="form-input" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+          <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
 
-          <button type="submit" className="btn btn-success btn-sm" style={{float:'left', marginBottom:15}}>Search</button>
+          <button type="submit" className="btn btn-success btn-md btn-block" style={{float:'left', marginBottom:15}}>Search</button>
         </form>
       </Card>
     );
@@ -122,7 +122,7 @@ class Recordings extends Component {
     const table = (
       //save the current user in state and put name in table title
       <Table title={this.state.name + '\'s '+ 'Recordings'} contentArray={sessions} button={button} actionButton={this.state.can_record?disableBtn: enableBtn}>
-        <tr>
+        <tr style={{backgroundColor: 'white'}}>
           {/* change according to recording object attributes */}
           <th scope="col">Session Owner</th>
           <th scope="col">Session Date</th>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Card from '../components/Card';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
+import TableScrollbar from 'react-table-scrollbar';
  
 class Sessions extends Component {
   constructor(props){
@@ -37,7 +38,7 @@ class Sessions extends Component {
     var email = this.state.email;
 
     //fetch sessions from database and save it in state.sessions
-    axios.get('http://localhost:8000/api/getSessions/' + email)
+    axios.get('http://localhost:8000/api/sessions/' + email)
     .then(res => {
       const res_sessions = res.data.sessions;
       const owner = res.data.owner_name;
@@ -53,7 +54,7 @@ class Sessions extends Component {
 
 
   viewParticipantsHandler(session){
-    axios.get('http://localhost:8000/api/viewParticipants/'+session.id)
+    axios.get('http://localhost:8000/api/participants/'+session.id)
     .then(response => {
         let res_participants = response.data.participants;
         this.participants = res_participants.map(p => 
@@ -81,7 +82,7 @@ class Sessions extends Component {
   refreshList(){
     let email = this.state.email;
     if(email === '') return;
-    axios.get('http://localhost:8000/api/getSessions/' + email)
+    axios.get('http://localhost:8000/api/sessions/' + email)
     .then(res => {
       const res_sessions = res.data.sessions;
       this.setState({
@@ -129,9 +130,9 @@ class Sessions extends Component {
         <form onSubmit={this.showTableHandler} >
 
           <label className="form-label" aria-label="name">Email: </label>
-          <input onChange={this.changeHandler} name="email" className="form-input" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+          <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
 
-          <button type="submit" className="btn btn-success btn-sm" style={{float:'left', marginBottom:15}}>Search</button>
+          <button type="submit" className="btn btn-success btn-md btn-block" style={{float:'left', marginBottom:15}}>Search</button>
         </form>
       </Card>
     );
@@ -161,17 +162,19 @@ class Sessions extends Component {
             <button onClick={this.refreshParticipantsList} type="button" className="btn btn-secondary btn-sm btn-block" style={{float:'right', marginBottom:5}}>Refresh</button>
             {/* Responsive table */}
             <div className="table-responsive">
+                <TableScrollbar rows={2}>
                 <table className="table m-1">   
-                    <thead>
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
+                    <thead >
+                      <tr style={{ backgroundColor: 'white'}}>
+                        <th scope="col" style={{position: 'sticky'}}>Name</th>
+                        <th scope="col" style={{position: 'sticky'}}>Email</th>
                       </tr>
                     </thead>
                     <tbody>
                         {this.participants}
                     </tbody>
                 </table>
+                </TableScrollbar>
             </div>
 
           {/* <Table contentArray={this.participants} refreshHandler={this.refreshParticipantsList}>

@@ -1,4 +1,5 @@
 import React from "react";
+import TableScrollbar from 'react-table-scrollbar';
 
 const Table = ({ children, title, contentArray, button, refreshHandler, actionButton }) => {
     
@@ -13,6 +14,7 @@ const Table = ({ children, title, contentArray, button, refreshHandler, actionBu
                         {/* Responsive table */}
                         <h3 style={{color:'black', marginBottom:15, float:'left'}}>{title}</h3>
                         <div className="table-responsive">
+                            <TableScrollbar rows={15}>
                             <table className="table m-0">   
                                 <thead>
                                     {children}
@@ -21,6 +23,7 @@ const Table = ({ children, title, contentArray, button, refreshHandler, actionBu
                                     {contentArray}
                                 </tbody>
                             </table>
+                            </TableScrollbar>
                         </div>
                     </div>
                 </div>

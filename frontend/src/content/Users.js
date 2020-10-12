@@ -31,7 +31,7 @@ class Users extends Component {
 
     componentDidMount(){
         
-        axios.get('http://localhost:8000/api/getUsers')
+        axios.get('http://localhost:8000/api/users')
         .then(res => {
             const res_users = res.data.users
             this.setState({
@@ -40,7 +40,6 @@ class Users extends Component {
                 showUpdateModal:false
             });
         })
-        console.log('component did mount')
     }
 
     showModal(){
@@ -49,6 +48,7 @@ class Users extends Component {
         });
     }
     showUpdateModal(user){
+
         this.setState({
             id: user.id,
             name: user.name,
@@ -82,7 +82,7 @@ class Users extends Component {
         };
 
         //post request to backend
-        axios.post('http://localhost:8000/api/addUser/',user)
+        axios.post('http://localhost:8000/api/users/',user)
         .then(res =>{
             this.refreshList();
             alert('success')
@@ -101,7 +101,7 @@ class Users extends Component {
             name: name,
             email: email
         };
-        axios.put('http://localhost:8000/api/updateUser/'+id,user)
+        axios.put('http://localhost:8000/api/users/'+id,user)
         .then(res => {
             //update the list
             this.refreshList();
@@ -122,7 +122,7 @@ class Users extends Component {
 
 
     DeleteUser(user){
-        axios.delete('http://localhost:8000/api/deleteUser/'+user.id)
+        axios.delete('http://localhost:8000/api/users/'+user.id)
         .then(res => {
             //update the list
             this.refreshList();
@@ -145,7 +145,7 @@ class Users extends Component {
     }
     refreshList(){
 
-        axios.get('http://localhost:8000/api/getUsers')
+        axios.get('http://localhost:8000/api/users')
         .then(res => {
             const res_users = res.data.users
             this.setState({
@@ -188,34 +188,34 @@ class Users extends Component {
                     <form onSubmit={this.createUser}>
 
                         <label className="form-label" aria-label="name">Name: </label>
-                        <input onChange={this.changeHandler} name="name" className="form-input" placeholder="Enter Full Name" value={this.state.name}></input><br/>
+                        <input onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
 
                         <label className="form-label" aria-label="name">Email: </label>
-                        <input onChange={this.changeHandler} name="email" className="form-input" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+                        <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} />
 
                         <label className="form-label" aria-label="name">Password: </label>
-                        <input onChange={this.changeHandler} name="password1" className="form-input" type="password" placeholder="Enter Password" value={this.state.password1}></input><br/>
+                        <input onChange={this.changeHandler} name="password1" className="form-control form-control-md" type="password" placeholder="Enter Password" value={this.state.password1} />
 
                         <label className="form-label" aria-label="name">Confirm Password: </label>
-                        <input onChange={this.changeHandler} name="password2" className="form-input" type="password" placeholder="Confirm Password" value={this.state.password2}></input><br/>
+                        <input onChange={this.changeHandler} name="password2" className="form-control form-control-md" type="password" placeholder="Confirm Password" value={this.state.password2} /><br/>
 
-                        <button type="submit" className="btn btn-success btn-sm" style={{float:'left', marginBottom:15}}>Add User</button>
+                        <button type="submit" className="btn btn-success btn-md" style={{float:'right', marginBottom:15}}>Add User</button>
                     </form>
                 </Modal>
                 <Modal show={this.state.showUpdateModal} handleClose={this.hideModal} title='Update User'>
                     <form onSubmit={this.updateUser}>
 
                         <label className="form-label" aria-label="name">Name: </label>
-                        <input onChange={this.changeHandler} name="name" className="form-input" placeholder="Enter Full Name" value={this.state.name}></input><br/>
+                        <input onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
 
                         <label className="form-label" aria-label="name">Email: </label>
-                        <input onChange={this.changeHandler} name="email" className="form-input" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+                        <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} /><br/>
 
-                        <button type="submit" className="btn btn-success btn-sm" style={{float:'left', marginBottom:15}}>Update User</button>
+                        <button type="submit" className="btn btn-success btn-md" style={{float:'right', marginBottom:15}}>Update User</button>
                     </form>
                 </Modal>
                 <Table title="Users" contentArray={users} button={button} refreshHandler={this.refreshList}>
-                    <tr>
+                    <tr style={{backgroundColor: 'white'}}>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col"></th>
