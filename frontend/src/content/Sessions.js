@@ -18,11 +18,13 @@ class Sessions extends Component {
     this.changeHandler = this.changeHandler.bind(this);
     this.showTableHandler = this.showTableHandler.bind(this);
     this.viewParticipantsHandler = this.viewParticipantsHandler.bind(this);
+    this.refreshParticipantsList = this.refreshParticipantsList.bind(this);
     this.changeUser = this.changeUser.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.closeModal = this.closeModal.bind(this);
     
     this.participants = [];
+    this.currentSession = null;
   }
 
   changeHandler(event){
@@ -54,6 +56,7 @@ class Sessions extends Component {
 
 
   viewParticipantsHandler(session){
+    this.currentSession = session
     axios.get('http://localhost:8000/api/participants/'+session.id)
     .then(response => {
         let res_participants = response.data.participants;
@@ -96,9 +99,12 @@ class Sessions extends Component {
     this.setState({
       showParticipantsModal: false
     })
+    this.participants = [];
+    this.currentSession = null;
   }
   refreshParticipantsList(){
-    console.log('refreshed!')
+    if(this.currentSession != null)
+        this.viewParticipantsHandler(this.currentSession);
   }
 
   render() {
@@ -162,7 +168,7 @@ class Sessions extends Component {
             <button onClick={this.refreshParticipantsList} type="button" className="btn btn-secondary btn-sm btn-block" style={{float:'right', marginBottom:5}}>Refresh</button>
             {/* Responsive table */}
             <div className="table-responsive">
-                <TableScrollbar rows={2}>
+                <TableScrollbar rows={5}>
                 <table className="table m-1">   
                     <thead >
                       <tr style={{ backgroundColor: 'white'}}>
