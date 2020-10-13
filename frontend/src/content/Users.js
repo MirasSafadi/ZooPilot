@@ -4,6 +4,7 @@ import Modal from '../components/Modal';
 import Table from '../components/Table';
 
 
+
  
 class Users extends Component {
     constructor(props){
@@ -59,6 +60,11 @@ class Users extends Component {
     hideModal(){
         this.resetToDefaults();
     }
+
+    validateEmail(email){
+        var regex =  /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+        return email.match(regex);
+    }
     
     //submit add user form
     createUser(event){
@@ -67,14 +73,69 @@ class Users extends Component {
         let email = this.state.email;
         let password1 = this.state.password1;
         let password2 = this.state.password2;
+
+        //Input validation
         if(name === '' || email === '' || password1 === '' || password2 === ''){
-            alert('invalid data');
+            alert('One or more of the fields is missing.');
             return;
         }
+        
+        var isValid = true;
+        //Validate name
+        var nameValidator = /^[a-z ]+[^0-9]$/i;
+        var nameAlert = "Name must contain only alphabetical characters."
+        if(!nameValidator.test(name)){
+            isValid = false;
+
+            this.setState({
+                name: ''
+            })
+            document.getElementById('nameTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            alert(nameAlert);
+            
+        }
+        //validate email - The validation is in a different function because the regex is too long and would make this function unreadable.
+        if(!this.validateEmail(email)){
+            isValid = false;
+            this.setState({
+                email: ''
+            })
+            document.getElementById('emailTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            alert('Invalid email.');
+            
+        }
+        //Validate password
+        var passwordValidator = new RegExp("^((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,}))");
+        var passAlert = 'Password must contain at least:\n'+
+                        '• 1 lowercase alphabetical character.\n'+
+                        '• 1 uppercase alphabetical character.\n'+
+                        '• 1 numeric character.\n'+
+                        '• 6 characters.\n'
+        if(!passwordValidator.test(password1)){
+            isValid = false;
+            //reset the passwords TF's
+            this.setState({
+                password1: '',
+                password2: ''
+            })
+            document.getElementById('pass1').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            document.getElementById('pass2').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            alert(passAlert);
+            
+        }
+
+        if(!isValid)
+            return;
+
         if(password1 !== password2){
+            document.getElementById('pass1').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            document.getElementById('pass2').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
             alert('Passwords don\'t match');
             return;
         }
+
+        //========================================================================================================
+        //input is valid, save user in DB
         var user = {
             name: name,
             email: email,
@@ -113,6 +174,11 @@ class Users extends Component {
     }
 
     changeHandler(event){
+        //reset the styles once typing begins
+        document.getElementById('pass1').style.boxShadow = '';
+        document.getElementById('pass2').style.boxShadow = '';
+        document.getElementById('nameTF').style.boxShadow = '';
+        document.getElementById('emailTF').style.boxShadow = '';
         let name = event.target.name;
         let value = event.target.value;
         this.setState({
@@ -133,6 +199,10 @@ class Users extends Component {
     }
 
     resetToDefaults(){
+        document.getElementById('pass1').style.boxShadow = '';
+        document.getElementById('pass2').style.boxShadow = '';
+        document.getElementById('nameTF').style.boxShadow = '';
+        document.getElementById('emailTF').style.boxShadow = '';
         this.setState({
             showModal: false,
             showUpdateModal:false,
@@ -188,16 +258,16 @@ class Users extends Component {
                     <form onSubmit={this.createUser}>
 
                         <label className="form-label" aria-label="name">Name: </label>
-                        <input onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
+                        <input id="nameTF" onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
 
                         <label className="form-label" aria-label="name">Email: </label>
-                        <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} />
+                        <input id="emailTF" onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} />
 
                         <label className="form-label" aria-label="name">Password: </label>
-                        <input onChange={this.changeHandler} name="password1" className="form-control form-control-md" type="password" placeholder="Enter Password" value={this.state.password1} />
+                        <input id="pass1" onChange={this.changeHandler} name="password1" className="form-control form-control-md" type="password" placeholder="Enter Password" value={this.state.password1} />
 
                         <label className="form-label" aria-label="name">Confirm Password: </label>
-                        <input onChange={this.changeHandler} name="password2" className="form-control form-control-md" type="password" placeholder="Confirm Password" value={this.state.password2} /><br/>
+                        <input id="pass2" onChange={this.changeHandler} name="password2" className="form-control form-control-md" type="password" placeholder="Confirm Password" value={this.state.password2} /><br/>
 
                         <button type="submit" className="btn btn-success btn-md" style={{float:'right', marginBottom:15}}>Add User</button>
                     </form>

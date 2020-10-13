@@ -89,7 +89,8 @@ def sessions(request,email):
                 }
                 sessions.append(session)
             return JsonResponse({'sessions':sessions,'owner_name':name})
-        return HttpResponse('User does not exist',content_type='text/plain',status=400)
+        return HttpResponse('User does not exist',content_type='text/plain',status=404)
+    return HttpResponse(status=400)
 
 @api_view(['GET','PUT'])
 @csrf_exempt #FOR TESTING ONLY
@@ -115,7 +116,6 @@ def recordings(request,email):
                 recordings.append(recording)
             return JsonResponse({'recordings':recordings,'name':author['name'],'can_record':author['can_record']})
         return HttpResponse('User does not exist',content_type='text/plain',status=404)
-
     if request.method == 'PUT': #block/unblock a user from recording
         oldVal = get_collecetion('ZooPilot','Users').find_one({'email':email},{'can_record':1})['can_record']
         get_collecetion('ZooPilot','Users').update_one({'email':email},{'$set':{'can_record': not oldVal}})
@@ -137,4 +137,5 @@ def participants(request,id):
             }
             participants.append(user)
         return JsonResponse({'participants':participants})
+    return HttpResponse(status=400)
     
