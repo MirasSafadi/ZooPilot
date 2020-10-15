@@ -11,16 +11,19 @@ class Home extends Component {
               For the sake of the our users' privacy we cannot let you edit or see the passwords.<br/>
               In fact, all the passwords are hashed usign SHA-256 algorithm to insure the privacy of our users.<br/>
               As an admin you can:
-              <ul>
-                <li>View a users' sessions.</li>
-                <li>View a users' recordings.</li>
-                <li>View a sessions' participants.</li>
-                <li>Block/Unblock a user from recording.</li>
-              </ul>
+            </p>
+            <ul>
+              <li>View a users' sessions.</li>
+              <li>View a users' recordings.</li>
+              <li>View a sessions' participants.</li>
+              <li>Block/Unblock a user from recording.</li>
+            </ul>
+            <p>
               You can Naviagte between actions using the navigation bar on the top of the screen.<br/>
               Each action page has clear instructions of use.
-              <center><h5>Happy Administrating!</h5></center>
             </p>
+            <center><h5>Happy Administrating!</h5></center>
+            
       </Card>
     );
   }

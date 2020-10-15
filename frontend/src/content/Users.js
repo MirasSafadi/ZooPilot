@@ -5,8 +5,10 @@ import Table from '../components/Table';
 
 
 
- 
+const cached_users = 'cached_users';
+
 class Users extends Component {
+    
     constructor(props){
         super(props)
         this.state = {
@@ -28,19 +30,32 @@ class Users extends Component {
         this.updateUser = this.updateUser.bind(this);
         this.resetToDefaults = this.resetToDefaults.bind(this);
         this.refreshList = this.refreshList.bind(this);
+        this.handleWindowClose = this.handleWindowClose.bind(this);
+
+        if(!localStorage.getItem(cached_users)){
+            //if not defined, define it
+            localStorage.setItem(cached_users,"");
+        }
+    }
+
+    handleWindowClose(){
+        localStorage.removeItem(cached_users);
     }
 
     componentDidMount(){
-        
-        axios.get('http://localhost:8000/api/users')
-        .then(res => {
-            const res_users = res.data.users
+        window.addEventListener('beforeunload', this.handleWindowClose);
+        if(localStorage.getItem(cached_users) === "")
+            this.refreshList();
+        else{
             this.setState({
-                users: res_users,
-                showModal: false,
-                showUpdateModal:false
-            });
-        })
+                users: JSON.parse(localStorage.getItem(cached_users))
+            })
+        }
+            
+    }
+    componentWillUnmount(){
+        localStorage.setItem(cached_users,JSON.stringify(this.state.users));
+        window.removeEventListener('beforeunload', this.handleWindowClose);
     }
 
     showModal(){
@@ -62,7 +77,7 @@ class Users extends Component {
     }
 
     validateEmail(email){
-        var regex =  /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+        var regex =  /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
         return email.match(regex);
     }
     
@@ -172,6 +187,16 @@ class Users extends Component {
         })
         this.resetToDefaults();
     }
+    DeleteUser(user){
+        axios.delete('http://localhost:8000/api/users/'+user.id)
+        .then(res => {
+            //update the list
+            this.refreshList();
+            alert('success');
+        }).catch(err => {
+            alert(err.message);
+        })
+    }
 
     changeHandler(event){
         //reset the styles once typing begins
@@ -186,17 +211,6 @@ class Users extends Component {
         });
     }
 
-
-    DeleteUser(user){
-        axios.delete('http://localhost:8000/api/users/'+user.id)
-        .then(res => {
-            //update the list
-            this.refreshList();
-            alert('success');
-        }).catch(err => {
-            alert(err.message);
-        })
-    }
 
     resetToDefaults(){
         document.getElementById('pass1').style.boxShadow = '';
@@ -214,7 +228,7 @@ class Users extends Component {
         });
     }
     refreshList(){
-
+        
         axios.get('http://localhost:8000/api/users')
         .then(res => {
             const res_users = res.data.users
