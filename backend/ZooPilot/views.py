@@ -1,10 +1,9 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,JsonResponse,QueryDict
+from django.http import HttpResponse,JsonResponse
 from utils.mongo_tools import *
 from pprint import pprint
 from pymongo import *
 from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
 import json
 from hashlib import sha256
 import datetime
@@ -14,7 +13,6 @@ from bson.objectid import ObjectId
 
 # Create your views here.
 @api_view(['GET','POST'])
-# @csrf_exempt #FOR TESTING ONLY
 def users(request):
     if request.method == 'GET':
         col = get_collecetion('ZooPilot','Users')
@@ -42,11 +40,10 @@ def users(request):
         }
         get_collecetion('ZooPilot','Users').insert_one(user)
         return HttpResponse(status=200)
-    return HttpResponse(status=400)
+    return HttpResponse('Request method not supported.',content_type='text/plain',status=400)
 
 
 @api_view(['PUT','DELETE'])
-# @csrf_exempt #FOR TESTING ONLY
 def users_update(request,id):
     if request.method == 'DELETE':
         _id = ObjectId(id)
@@ -65,10 +62,9 @@ def users_update(request,id):
         }
         get_collecetion('ZooPilot','Users').update_one({'_id':ObjectId(id)},{'$set':updated_user})
         return HttpResponse(status=200)
-    return HttpResponse(status=400)
+    return HttpResponse('Request method not supported.',content_type='text/plain',status=400)
 
 @api_view(['GET'])
-# @csrf_exempt #FOR TESTING ONLY
 def sessions(request,email):
     if request.method == 'GET':
         owner = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})
@@ -89,11 +85,10 @@ def sessions(request,email):
                 }
                 sessions.append(session)
             return JsonResponse({'sessions':sessions,'owner_name':name})
-        return HttpResponse('User does not exist',content_type='text/plain',status=404)
-    return HttpResponse(status=400)
+        return HttpResponse('User does not exist.',content_type='text/plain',status=404)
+    return HttpResponse('Request method not supported.',content_type='text/plain',status=400)
 
 @api_view(['GET','PUT'])
-# @csrf_exempt #FOR TESTING ONLY
 def recordings(request,email):
     if request.method == 'GET': #get recordings of a user
         author = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1,'can_record':1})
@@ -120,11 +115,10 @@ def recordings(request,email):
         oldVal = get_collecetion('ZooPilot','Users').find_one({'email':email},{'can_record':1})['can_record']
         get_collecetion('ZooPilot','Users').update_one({'email':email},{'$set':{'can_record': not oldVal}})
         return HttpResponse(status=200)
-    return HttpResponse(status=400)
+    return HttpResponse('Request method not supported.',content_type='text/plain',status=400)
 
 
 @api_view(['GET'])
-# @csrf_exempt#FOR TESTING ONLY
 def participants(request,id):
     if request.method == 'GET':
         cursor = get_collecetion('ZooPilot','participants_in_session').find({'sessionID':ObjectId(id)},{'userID':1})
@@ -137,5 +131,5 @@ def participants(request,id):
             }
             participants.append(user)
         return JsonResponse({'participants':participants})
-    return HttpResponse(status=400)
+    return HttpResponse('Request method not supported.',content_type='text/plain',status=400)
     

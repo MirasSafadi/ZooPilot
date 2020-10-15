@@ -52,7 +52,10 @@ class Sessions extends Component {
         showTable: true,
       });
     }).catch((error) => {
-      alert(error);
+      if (error.response) {
+        var msg = error.response.status+' Error: ' + error.response.data;
+        alert(msg);
+      }
     });
   }
 
@@ -71,6 +74,11 @@ class Sessions extends Component {
         this.setState({
               showParticipantsModal: true
         })
+    }).catch(error =>{
+      if (error.response) {
+        var msg = error.response.status+' Error: ' + error.response.data;
+        alert(msg);
+      }
     })
     
   }
@@ -93,8 +101,11 @@ class Sessions extends Component {
       this.setState({
         sessions: res_sessions
       });
-    }).catch(err => {
-      alert(err.message)
+    }).catch(error => {
+      if (error.response) {
+        var msg = error.response.status+' Error: ' + error.response.data;
+        alert(msg);
+      }
     })
   }
   closeModal(){

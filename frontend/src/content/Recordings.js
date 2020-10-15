@@ -44,7 +44,10 @@ class Recordings extends Component {
         can_record: can_record
       });
     }).catch(error => {
-      alert(error);
+      if (error.response) {
+        var msg = error.response.status+' Error: ' + error.response.data;
+        alert(msg);
+      }
     });
     
   }
@@ -65,7 +68,10 @@ class Recordings extends Component {
         can_record: record_ability
       });
     }).catch(error => {
-      alert(error);
+      if (error.response) {
+        var msg = error.response.status+' Error: ' + error.response.data;
+        alert(msg);
+      }
     });
   }
 

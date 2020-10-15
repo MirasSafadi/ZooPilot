@@ -162,8 +162,11 @@ class Users extends Component {
         .then(res =>{
             this.refreshList();
             alert('success')
-        }).catch(err =>{
-            alert('Failure: '+ err.message)
+        }).catch(error =>{
+            if (error.response) {
+                var msg = error.response.status+' Error: ' + error.response.data;
+                alert(msg);
+            }
         })
         this.resetToDefaults();
     }
@@ -182,8 +185,11 @@ class Users extends Component {
             //update the list
             this.refreshList();
             alert('success')
-        }).catch(err => {
-            alert('Failure: '+ err.message)
+        }).catch(error => {
+            if (error.response) {
+                var msg = error.response.status+' Error: ' + error.response.data;
+                alert(msg);
+            }
         })
         this.resetToDefaults();
     }
@@ -193,8 +199,11 @@ class Users extends Component {
             //update the list
             this.refreshList();
             alert('success');
-        }).catch(err => {
-            alert(err.message);
+        }).catch(error => {
+            if (error.response) {
+                var msg = error.response.status+' Error: ' + error.response.data;
+                alert(msg);
+            }
         })
     }
 
@@ -235,6 +244,11 @@ class Users extends Component {
             this.setState({
                 users: res_users
             });
+        }).catch(error =>{
+            if (error.response) {
+                var msg = error.response.status+' Error: ' + error.response.data;
+                alert(msg);
+            }
         })
         
     }
