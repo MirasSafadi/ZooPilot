@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import axios from 'axios';
 import Card from '../components/Card';
 import Table from '../components/Table';
- 
+
+
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 class Recordings extends Component {
   constructor(props){
     super(props)

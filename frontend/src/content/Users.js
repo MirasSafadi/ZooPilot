@@ -4,7 +4,7 @@ import Modal from '../components/Modal';
 import Table from '../components/Table';
 
 
-
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 const cached_users = 'cached_users';
 
 class Users extends Component {

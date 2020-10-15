@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 
 # Create your views here.
 @api_view(['GET','POST'])
-@csrf_exempt #FOR TESTING ONLY
+# @csrf_exempt #FOR TESTING ONLY
 def users(request):
     if request.method == 'GET':
         col = get_collecetion('ZooPilot','Users')
@@ -46,7 +46,7 @@ def users(request):
 
 
 @api_view(['PUT','DELETE'])
-@csrf_exempt #FOR TESTING ONLY
+# @csrf_exempt #FOR TESTING ONLY
 def users_update(request,id):
     if request.method == 'DELETE':
         _id = ObjectId(id)
@@ -68,7 +68,7 @@ def users_update(request,id):
     return HttpResponse(status=400)
 
 @api_view(['GET'])
-@csrf_exempt #FOR TESTING ONLY
+# @csrf_exempt #FOR TESTING ONLY
 def sessions(request,email):
     if request.method == 'GET':
         owner = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1})
@@ -93,7 +93,7 @@ def sessions(request,email):
     return HttpResponse(status=400)
 
 @api_view(['GET','PUT'])
-@csrf_exempt #FOR TESTING ONLY
+# @csrf_exempt #FOR TESTING ONLY
 def recordings(request,email):
     if request.method == 'GET': #get recordings of a user
         author = get_collecetion('ZooPilot','Users').find_one({'email':email},{'name':1,'can_record':1})
@@ -124,7 +124,7 @@ def recordings(request,email):
 
 
 @api_view(['GET'])
-@csrf_exempt#FOR TESTING ONLY
+# @csrf_exempt#FOR TESTING ONLY
 def participants(request,id):
     if request.method == 'GET':
         cursor = get_collecetion('ZooPilot','participants_in_session').find({'sessionID':ObjectId(id)},{'userID':1})

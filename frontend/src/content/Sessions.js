@@ -4,7 +4,9 @@ import Card from '../components/Card';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import TableScrollbar from 'react-table-scrollbar';
- 
+
+
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 class Sessions extends Component {
   constructor(props){
     super(props)
