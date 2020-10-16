@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from 'axios';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
+import {validation_types,validate} from '../inputValidators';
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -19,7 +20,8 @@ class Users extends Component {
             email:'',
             id:'',
             password1:'',
-            password2:''
+            password2:'',
+            can_record: false
         }
         this.showModal = this.showModal.bind(this);
         this.showUpdateModal = this.showUpdateModal.bind(this);
@@ -69,23 +71,20 @@ class Users extends Component {
             id: user.id,
             name: user.name,
             email: user.email,
+            can_record: user.can_record,
             showUpdateModal: true
         });
     }
     hideModal(){
         this.resetToDefaults();
     }
-
-    validateEmail(email){
-        var regex =  /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
-        return email.match(regex);
-    }
     
     //submit add user form
     createUser(event){
         event.preventDefault();
         let name = this.state.name;
-        let email = this.state.email;
+        let email = this.state.email.toLowerCase();
+        let can_record = this.state.can_record;
         let password1 = this.state.password1;
         let password2 = this.state.password2;
 
@@ -97,36 +96,31 @@ class Users extends Component {
         
         var isValid = true;
         //Validate name
-        var nameValidator = /^[a-z ]+[^0-9]$/i;
-        var nameAlert = "Name must contain only alphabetical characters."
-        if(!nameValidator.test(name)){
+        if(!validate(validation_types.NAME,name)){
             isValid = false;
-
             this.setState({
                 name: ''
             })
             document.getElementById('nameTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
-            alert(nameAlert);
+            alert("Name must contain only alphabetical characters.");
             
         }
         //validate email - The validation is in a different function because the regex is too long and would make this function unreadable.
-        if(!this.validateEmail(email)){
+        if(!validate(validation_types.EMAIL,email)){
             isValid = false;
             this.setState({
                 email: ''
             })
             document.getElementById('emailTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
             alert('Invalid email.');
-            
         }
         //Validate password
-        var passwordValidator = new RegExp("^((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,}))");
         var passAlert = 'Password must contain at least:\n'+
                         '• 1 lowercase alphabetical character.\n'+
                         '• 1 uppercase alphabetical character.\n'+
                         '• 1 numeric character.\n'+
                         '• 6 characters.\n'
-        if(!passwordValidator.test(password1)){
+        if(!validate(validation_types.PASSWORD,password1)){
             isValid = false;
             //reset the passwords TF's
             this.setState({
@@ -154,6 +148,7 @@ class Users extends Component {
         var user = {
             name: name,
             email: email,
+            can_record: can_record,
             password: password1
         };
 
@@ -174,11 +169,44 @@ class Users extends Component {
     updateUser(event){
         event.preventDefault();
         let name = this.state.name;
-        let email = this.state.email;
+        let email = this.state.email.toLowerCase();
+        let can_record = this.state.can_record;
         let id = this.state.id;
+
+        //Input validation
+        if(name === '' || email === ''){
+            alert('One or more of the fields is missing.');
+            return;
+        }
+        
+        var isValid = true;
+        //Validate name
+        if(!validate(validation_types.NAME,name)){
+            isValid = false;
+            this.setState({
+                name: name
+            })
+            document.getElementById('uNameTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            alert("Name must contain only alphabetical characters.");
+            
+        }
+        //validate email - The validation is in a different function because the regex is too long and would make this function unreadable.
+        if(!validate(validation_types.EMAIL,email)){
+            isValid = false;
+            this.setState({
+                email: email
+            })
+            document.getElementById('uEmailTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+            alert('Invalid email.');
+        }
+        if(!isValid)
+            return;
+        //================================================================================
+        //input is valid update user in DB
         var user = {
             name: name,
-            email: email
+            email: email,
+            can_record: can_record
         };
         axios.put('http://localhost:8000/api/users/'+id,user)
         .then(res => {
@@ -213,8 +241,11 @@ class Users extends Component {
         document.getElementById('pass2').style.boxShadow = '';
         document.getElementById('nameTF').style.boxShadow = '';
         document.getElementById('emailTF').style.boxShadow = '';
+        document.getElementById('uNameTF').style.boxShadow = '';
+        document.getElementById('uEmailTF').style.boxShadow = '';
         let name = event.target.name;
         let value = event.target.value;
+        
         this.setState({
             [name]: value
         });
@@ -226,6 +257,8 @@ class Users extends Component {
         document.getElementById('pass2').style.boxShadow = '';
         document.getElementById('nameTF').style.boxShadow = '';
         document.getElementById('emailTF').style.boxShadow = '';
+        document.getElementById('uNameTF').style.boxShadow = '';
+        document.getElementById('uEmailTF').style.boxShadow = '';
         this.setState({
             showModal: false,
             showUpdateModal:false,
@@ -258,6 +291,7 @@ class Users extends Component {
             <tr key={u.id}>
                 <td>{u.name}</td>
                 <td>{u.email}</td>
+                <td>{u.can_record? 'Yes': 'No'}</td>
                 <td>
                     {/* Call to action buttons */}
                     <ul className="list-inline m-0">
@@ -288,13 +322,18 @@ class Users extends Component {
                         <label className="form-label" aria-label="name">Name: </label>
                         <input id="nameTF" onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
 
-                        <label className="form-label" aria-label="name">Email: </label>
+                        <label className="form-label" aria-label="email">Email: </label>
                         <input id="emailTF" onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} />
-
-                        <label className="form-label" aria-label="name">Password: </label>
+                        
+                        <div className="form-check" style={{marginBottom: 5, marginTop: 5}}>
+                            <input type="checkbox" className="form-check-input" onChange={() => {this.setState(prevState => ({ can_record: !prevState.can_record}));}} />
+                            <label className="form-check-label" aria-label="can record">Can Record</label>
+                        </div>
+                        
+                        <label className="form-label" aria-label="password">Password: </label>
                         <input id="pass1" onChange={this.changeHandler} name="password1" className="form-control form-control-md" type="password" placeholder="Enter Password" value={this.state.password1} />
 
-                        <label className="form-label" aria-label="name">Confirm Password: </label>
+                        <label className="form-label" aria-label="confirm password">Confirm Password: </label>
                         <input id="pass2" onChange={this.changeHandler} name="password2" className="form-control form-control-md" type="password" placeholder="Confirm Password" value={this.state.password2} /><br/>
 
                         <button type="submit" className="btn btn-success btn-md" style={{float:'right', marginBottom:15}}>Add User</button>
@@ -304,10 +343,15 @@ class Users extends Component {
                     <form onSubmit={this.updateUser}>
 
                         <label className="form-label" aria-label="name">Name: </label>
-                        <input onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
+                        <input id="uNameTF" onChange={this.changeHandler} name="name" className="form-control form-control-md" placeholder="Enter Full Name" value={this.state.name} />
 
-                        <label className="form-label" aria-label="name">Email: </label>
-                        <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} /><br/>
+                        <label className="form-label" aria-label="email">Email: </label>
+                        <input id="uEmailTF" onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email} />
+
+                        <div className="form-check" style={{marginBottom: 5, marginTop: 5}}>
+                            <input type="checkbox" className="form-check-input" onChange={() => {this.setState(prevState => ({ can_record: !prevState.can_record}));}} checked={this.state.can_record}/>
+                            <label className="form-check-label" aria-label="can record">Can Record</label>
+                        </div>
 
                         <button type="submit" className="btn btn-success btn-md" style={{float:'right', marginBottom:15}}>Update User</button>
                     </form>
@@ -316,6 +360,7 @@ class Users extends Component {
                     <tr style={{backgroundColor: 'white'}}>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Can Record</th>
                         <th scope="col"></th>
                     </tr>
                 </Table>

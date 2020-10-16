@@ -22,7 +22,8 @@ def users(request):
             user = {
                 'id': str(doc['_id']),
                 'name': doc['name'],
-                'email': doc['email']
+                'email': doc['email'],
+                'can_record': doc['can_record']
             }
             users.append(user)
         return JsonResponse({'users':users})
@@ -30,12 +31,14 @@ def users(request):
         data = request.data
         name = data['name']
         email = data['email']
+        can_record = data['can_record']
         password = data['password'].encode('utf-8')
         #hash password before saving it to database
         hashed_password = sha256(password).hexdigest()
         user = {
             'name': name,
             'email': email,
+            'can_record': can_record,
             'password': hashed_password 
         }
         get_collecetion('ZooPilot','Users').insert_one(user)
@@ -58,7 +61,8 @@ def users_update(request,id):
         data = json.loads(request.body)
         updated_user = {
             'name': data['name'],
-            'email': data['email']
+            'email': data['email'],
+            'can_record': data['can_record']
         }
         get_collecetion('ZooPilot','Users').update_one({'_id':ObjectId(id)},{'$set':updated_user})
         return HttpResponse(status=200)

@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import Table from '../components/Table';
 import Modal from '../components/Modal';
 import TableScrollbar from 'react-table-scrollbar';
+import {validation_types,validate} from '../inputValidators';
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -39,8 +40,21 @@ class Sessions extends Component {
   }
   showTableHandler(event){
     event.preventDefault();
-    var email = this.state.email;
+    var email = this.state.email.toLowerCase();
 
+    //Input validation
+    if(email === ''){
+      alert('One or more of the fields is missing.');
+      return;
+    }
+    if(!validate(validation_types.EMAIL,email)){
+      this.setState({
+          email: email
+      })
+      document.getElementById('emailTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+      alert('Invalid email.');
+      return;
+    }
     //fetch sessions from database and save it in state.sessions
     axios.get('http://localhost:8000/api/sessions/' + email)
     .then(res => {
@@ -149,7 +163,7 @@ class Sessions extends Component {
         <form onSubmit={this.showTableHandler} >
 
           <label className="form-label" aria-label="name">Email: </label>
-          <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+          <input id="emailTF" onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
 
           <button type="submit" className="btn btn-success btn-md btn-block" style={{float:'left', marginBottom:15}}>Search</button>
         </form>

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from 'axios';
 import Card from '../components/Card';
 import Table from '../components/Table';
+import {validation_types,validate} from '../inputValidators';
 
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -31,7 +32,20 @@ class Recordings extends Component {
   }
   showTableHandler(event){
     event.preventDefault();
-    let email = this.state.email
+    let email = this.state.email.toLowerCase();
+    //Input validation
+    if(email === ''){
+      alert('One or more of the fields is missing.');
+      return;
+    }
+    if(!validate(validation_types.EMAIL,email)){
+      this.setState({
+          email: email
+      })
+      document.getElementById('emailTF').style.boxShadow = '0 0 5px rgb(255, 0, 0)';
+      alert('Invalid email.');
+      return;
+    }
     axios.get('http://localhost:8000/api/recordings/' + email)
     .then(response => {
       const recordings = response.data.recordings;
@@ -94,7 +108,7 @@ class Recordings extends Component {
         <form onSubmit={this.showTableHandler} >
 
           <label className="form-label" aria-label="name">Email: </label>
-          <input onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
+          <input id="emailTF" onChange={this.changeHandler} name="email" className="form-control form-control-md" type="text" placeholder="Enter Email" value={this.state.email}></input><br/>
 
           <button type="submit" className="btn btn-success btn-md btn-block" style={{float:'left', marginBottom:15}}>Search</button>
         </form>

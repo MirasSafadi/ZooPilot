@@ -33,6 +33,9 @@ View a users' sessions:
 <p align="center">
   <img src="/Screenshots/Sessions1.jpg" align="center">
 </p>
+<p align="center">
+  <img src="/Screenshots/empty Sessions.jpg" align="center">
+</p>
 View Session Participants
 <p align="center">
   <img src="/Screenshots/Session Participants.jpg" align="center">
@@ -43,6 +46,9 @@ View a users' recordings:
 </p>
 <p align="center">
   <img src="/Screenshots/Recordings2.jpg" align="center">
+</p>
+<p align="center">
+  <img src="/Screenshots/empty Recordings.jpg" align="center">
 </p>
 Block/Unblock a user from recording:
 <p align="center">
